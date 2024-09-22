@@ -78,9 +78,11 @@ export class LoginPersistor implements ILoginPersistor {
 }
 
 export class LogoutPersistor implements ILogoutPersistor {
-  // !FIXME: when it is done in the libary
-  revokeTokens: () => Promise<boolean> = async () => {
-    console.log("code to revoke token");
+  revokeTokens: (token: {
+    refreshToken: string;
+    accessToken: string;
+  }) => Promise<boolean> = async (token) => {
+    console.log("revoking...", token);
     return true;
   };
 }
