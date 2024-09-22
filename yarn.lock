@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@baijanstack/express-auth@0.0.0-alpha.11":
-  version "0.0.0-alpha.11"
-  resolved "https://registry.yarnpkg.com/@baijanstack/express-auth/-/express-auth-0.0.0-alpha.11.tgz#58ebfa4b09f284f8ce902837f95fc054022990ca"
-  integrity sha512-JsfzF9T2AvJ3cPdO8beha0a986MAaqF0ilHIu24DleNkAV8vSJJHWR1FIDx03spJ1scoL1+LSgYMyavB6VJGnw==
+"@baijanstack/express-auth@0.0.0-alpha.15":
+  version "0.0.0-alpha.15"
+  resolved "https://registry.yarnpkg.com/@baijanstack/express-auth/-/express-auth-0.0.0-alpha.15.tgz#d17ed54b84641fab15f05dcdb5daa78edf9eba5a"
+  integrity sha512-RhkRtPpIQ4xMqm/61PWq4fCYoAYkObWwSPATcOxLiFfTFV9ewhJriLdUtOO2ILIWoha+zNLz3wNLAH6c+vqT7A==
   dependencies:
     bcryptjs "^2.4.3"
     dotenv "^16.4.5"

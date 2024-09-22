@@ -115,11 +115,28 @@ export class RefreshPersistor implements IRefreshPersistor {
 }
 
 export class ResetPasswordPersistor implements IResetPasswordPersistor {
-  saveHashedPassword: (hashedPassword: string) => Promise<void> = async () => {
-    console.log("saving hashed password");
-  };
-  getOldPasswordHash: () => Promise<string> = async () => {
-    return "test";
+  saveHashedPassword: (email: string, hashedPassword: string) => Promise<void> =
+    async (email, hashedPassword) => {
+      await prisma.user.update({
+        where: {
+          email,
+        },
+        data: {
+          password: hashedPassword,
+        },
+      });
+    };
+  getOldPasswordHash: (email: string) => Promise<string> = async (email) => {
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+    if (!user) {
+      throw new Error(`User not found`);
+    }
+
+    return user.password;
   };
 }
 
