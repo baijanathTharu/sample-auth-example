@@ -17,17 +17,6 @@ import {
   SignUpPersistor,
 } from "./auth";
 
-const authConfig: TConfig = {
-  SALT_ROUNDS: Number(process.env.SALT_ROUNDS) || 10,
-  TOKEN_SECRET: process.env.TOKEN_SECRET || "test",
-  ACCESS_TOKEN_AGE: process.env.ACCESS_TOKEN_AGE || "3600",
-  REFRESH_TOKEN_AGE: process.env.REFRESH_TOKEN_AGE || "3600",
-  ACCESS_TOKEN_COOKIE_MAX_AGE:
-    Number(process.env.ACCESS_TOKEN_COOKIE_MAX_AGE) || 60,
-  REFRESH_TOKEN_COOKIE_MAX_AGE:
-    Number(process.env.REFRESH_TOKEN_COOKIE_MAX_AGE) || 3600,
-};
-
 const PORT = 4000;
 
 async function main() {
@@ -63,6 +52,7 @@ async function main() {
   const resetPasswordPersistor = new ResetPasswordPersistor();
   routeGenerator.createResetPasswordRoute(resetPasswordPersistor);
 
+  // me route
   const meRoutePersistor = new MeRoutePersistor();
   routeGenerator.createMeRoute(meRoutePersistor);
 

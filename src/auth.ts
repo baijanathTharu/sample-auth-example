@@ -6,18 +6,26 @@ import {
   ISignUpPersistor,
   IMeRoutePersistor,
 } from "@baijanstack/express-auth";
-import { User } from "@prisma/client";
 
 import { prisma } from "./prisma-client";
 
-export class SignUpPersistor implements ISignUpPersistor {
+type TEmailObj = {
+  email: string;
+};
+
+interface TSignUpBodyInput extends TEmailObj {
+  name: string;
+  password: string;
+}
+
+export class SignUpPersistor implements ISignUpPersistor<TSignUpBodyInput> {
   constructor() {
     console.log("signup persistor init...");
   }
 
   errors: { USER_ALREADY_EXISTS_MESSAGE?: string } = {};
 
-  doesUserExists: (body: Omit<User, "id">) => Promise<boolean> = async (
+  doesUserExists: (body: TSignUpBodyInput) => Promise<boolean> = async (
     body
   ) => {
     const user = await prisma.user.findUnique({
@@ -28,9 +36,8 @@ export class SignUpPersistor implements ISignUpPersistor {
     return !!user;
   };
 
-  saveUser: (body: Omit<User, "id">, hashedPassword: string) => Promise<void> =
+  saveUser: (body: TSignUpBodyInput, hashedPassword: string) => Promise<void> =
     async (body, hashedPassword) => {
-      console.log("saving user...", body, hashedPassword);
       await prisma.user.create({
         data: {
           name: body.name,
@@ -41,15 +48,19 @@ export class SignUpPersistor implements ISignUpPersistor {
     };
 }
 
-export class LoginPersistor implements ILoginPersistor {
+type TLoginOutput = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+export class LoginPersistor implements ILoginPersistor<TLoginOutput> {
   getUserByEmail: (email: string) => Promise<any> = async (email) => {
-    console.log("getUserByEmail", email);
     const user = await prisma.user.findUnique({
       where: {
         email,
       },
     });
-    console.log("getUserByEmail", user);
     return user;
   };
   errors: { PASSWORD_OR_EMAIL_INCORRECT?: string } = {
@@ -64,7 +75,6 @@ export class LoginPersistor implements ILoginPersistor {
     email: string;
   }> = async (email) => {
     const user = await prisma.user.findUnique({ where: { email } });
-    console.log("getTokenPayload", user);
 
     if (!user) {
       throw new Error("User not found");
@@ -82,12 +92,16 @@ export class LogoutPersistor implements ILogoutPersistor {
     refreshToken: string;
     accessToken: string;
   }) => Promise<boolean> = async (token) => {
-    console.log("revoking...", token);
     return true;
   };
 }
 
-export class RefreshPersistor implements IRefreshPersistor {
+type TRefreshOutput = {
+  email: string;
+  name: string;
+};
+
+export class RefreshPersistor implements IRefreshPersistor<TRefreshOutput> {
   errors: { INVALID_REFRESH_TOKEN?: string } = {};
 
   refresh: (token: string) => Promise<void> = async () => {
@@ -140,8 +154,13 @@ export class ResetPasswordPersistor implements IResetPasswordPersistor {
   };
 }
 
-export class MeRoutePersistor implements IMeRoutePersistor {
-  getMeByUserId: () => Promise<any> = async () => {
+type TMeOutput = {
+  name: string;
+  email: string;
+};
+
+export class MeRoutePersistor implements IMeRoutePersistor<TMeOutput> {
+  getMeByEmail: () => Promise<any> = async () => {
     console.log("getting logged in user...");
   };
 }
