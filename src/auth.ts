@@ -5,6 +5,7 @@ import {
   IResetPasswordPersistor,
   ISignUpPersistor,
   IMeRoutePersistor,
+  IVerifyEmailPersistor,
 } from "@baijanstack/express-auth";
 
 import { prisma } from "./prisma-client";
@@ -162,5 +163,31 @@ type TMeOutput = {
 export class MeRoutePersistor implements IMeRoutePersistor<TMeOutput> {
   getMeByEmail: () => Promise<any> = async () => {
     console.log("getting logged in user...");
+  };
+}
+
+export class VerifyEmailPersistor implements IVerifyEmailPersistor {
+  errors: { EMAIL_NOT_ELIGIBLE_FOR_VERIFICATION?: string } = {
+    EMAIL_NOT_ELIGIBLE_FOR_VERIFICATION: "",
+  };
+
+  isEmailEligibleForVerification: (email: string) => Promise<boolean> = async (
+    email
+  ) => {
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+    console.log("user", user);
+
+    return !user?.is_email_verified;
+  };
+
+  sendVerificationEmail: (input: {
+    email: string;
+    verificationPath: string;
+  }) => Promise<void> = async (input) => {
+    console.log("sendVerificationEmail Input", input);
   };
 }

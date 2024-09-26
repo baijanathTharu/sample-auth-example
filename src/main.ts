@@ -15,6 +15,7 @@ import {
   RefreshPersistor,
   ResetPasswordPersistor,
   SignUpPersistor,
+  VerifyEmailPersistor,
 } from "./auth";
 
 const PORT = 4000;
@@ -55,6 +56,10 @@ async function main() {
   // me route
   const meRoutePersistor = new MeRoutePersistor();
   routeGenerator.createMeRoute(meRoutePersistor);
+
+  // verify email route
+  const verifyEmailPersistor = new VerifyEmailPersistor();
+  routeGenerator.createVerifyEmailRoute(verifyEmailPersistor);
 
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error("final error");
