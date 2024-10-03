@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 
 import { RouteGenerator, TConfig } from "@baijanstack/express-auth";
 import {
+  EmailNotificationService,
   LoginPersistor,
   LogoutPersistor,
   MeRoutePersistor,
@@ -31,7 +32,9 @@ async function main() {
     res.send("hello from server");
   });
 
-  const routeGenerator = new RouteGenerator(app);
+  const notificationService = new EmailNotificationService();
+
+  const routeGenerator = new RouteGenerator(app, notificationService);
 
   // sign up route
   const signUpPersistor = new SignUpPersistor();

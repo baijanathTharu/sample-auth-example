@@ -6,6 +6,7 @@ import {
   ISignUpPersistor,
   IMeRoutePersistor,
   IVerifyEmailPersistor,
+  INotifyService,
 } from "@baijanstack/express-auth";
 
 import { prisma } from "./prisma-client";
@@ -190,4 +191,12 @@ export class VerifyEmailPersistor implements IVerifyEmailPersistor {
   }) => Promise<void> = async (input) => {
     console.log("sendVerificationEmail Input", input);
   };
+}
+
+export class EmailNotificationService implements INotifyService {
+  async notify(type: "TOKEN_STOLEN", email: string): Promise<void> {
+    if (type === "TOKEN_STOLEN") {
+      console.log(`Notifying ... ${email}`);
+    }
+  }
 }
