@@ -200,7 +200,9 @@ export class ForgotPasswordPersistor implements IForgotPasswordPersistor {
       },
     });
 
-    return !!user && user.is_email_verified;
+    console.log("user", user);
+
+    return !!user;
   };
   saveOtp: (
     email: string,
