@@ -232,6 +232,19 @@ export class ForgotPasswordPersistor implements IForgotPasswordPersistor {
 }
 
 export class VerifyOtpPersistor implements IVerifyOtpPersistor {
+  saveNewPassword: (email: string, password: string) => Promise<void> = async (
+    email,
+    password
+  ) => {
+    await prisma.user.update({
+      where: {
+        email,
+      },
+      data: {
+        password,
+      },
+    });
+  };
   isOtpValid: (email: string, otp: string) => Promise<boolean> = async (
     email,
     otp

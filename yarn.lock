@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@baijanstack/express-auth@0.0.0-alpha.25":
-  version "0.0.0-alpha.25"
-  resolved "https://registry.yarnpkg.com/@baijanstack/express-auth/-/express-auth-0.0.0-alpha.25.tgz#69aca252b0f9308792e741b91ea8eecb7c7ceded"
-  integrity sha512-c5aWDQ0/YaU9HNZog/6qhBjXeCsBckMKMeL+8EIW3On/E4wO4mKbze3mS4ULP7R5I40xH100k9SWfGtCIwK8/Q==
+"@baijanstack/express-auth@0.0.0-alpha.26":
+  version "0.0.0-alpha.26"
+  resolved "https://registry.yarnpkg.com/@baijanstack/express-auth/-/express-auth-0.0.0-alpha.26.tgz#af4f0b90425089d3b9e21a32b4cf4dce965eedc9"
+  integrity sha512-cEsKtp+ifmdQIk1WFEHakRkvx+oXRNCQdXnPqyIwwm78dpa44ckgIgA1vy3h1qouYN8bCZ671eTpL3MT3yMFJw==
   dependencies:
     "@prisma/client" "^5.20.0"
     bcryptjs "^2.4.3"
