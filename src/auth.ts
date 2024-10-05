@@ -7,6 +7,8 @@ import {
   IMeRoutePersistor,
   IVerifyEmailPersistor,
   INotifyService,
+  IForgotPasswordPersistor,
+  IVerifyOtpPersistor,
 } from "@baijanstack/express-auth";
 
 import { prisma } from "./prisma-client";
@@ -90,10 +92,7 @@ export class LoginPersistor implements ILoginPersistor<TLoginOutput> {
 }
 
 export class LogoutPersistor implements ILogoutPersistor {
-  revokeTokens: (token: {
-    refreshToken: string;
-    accessToken: string;
-  }) => Promise<boolean> = async (token) => {
+  shouldLogout: () => Promise<boolean> = async () => {
     return true;
   };
 }
@@ -190,6 +189,71 @@ export class VerifyEmailPersistor implements IVerifyEmailPersistor {
     verificationPath: string;
   }) => Promise<void> = async (input) => {
     console.log("sendVerificationEmail Input", input);
+  };
+}
+
+export class ForgotPasswordPersistor implements IForgotPasswordPersistor {
+  doesUserExists: (email: string) => Promise<boolean> = async (email) => {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    return !!user && user.is_email_verified;
+  };
+  saveOtp: (
+    email: string,
+    otp: { code: string; generatedAt: number }
+  ) => Promise<void> = async (email, otp) => {
+    await prisma.user.update({
+      where: {
+        email,
+      },
+      data: {
+        UserOtp: {
+          create: {
+            code: otp.code,
+            generated_at: new Date(otp.generatedAt * 1000),
+            is_used: false,
+          },
+        },
+      },
+    });
+  };
+  sendOtp: (
+    email: string,
+    otp: { code: string; generatedAt: number }
+  ) => Promise<void> = async (email, otp) => {
+    console.log("----seind otp", email, otp);
+  };
+}
+
+export class VerifyOtpPersistor implements IVerifyOtpPersistor {
+  isOtpValid: (email: string, otp: string) => Promise<boolean> = async (
+    email,
+    otp
+  ) => {
+    const latestOtp = await prisma.userOtp.findFirst({
+      where: {
+        user: {
+          email,
+        },
+      },
+      orderBy: {
+        created: "desc",
+      },
+    });
+
+    if (!latestOtp) {
+      console.error("latestOtp not found");
+      return false;
+    }
+
+    const isExpired =
+      Date.now() > latestOtp.generated_at.getTime() + 5 * 60 * 1000; // 5 minutes
+
+    return latestOtp.code === otp && !latestOtp.is_used && !isExpired;
   };
 }
 
