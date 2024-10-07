@@ -7,18 +7,18 @@ config({
 import express, { NextFunction, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 
-import { RouteGenerator, TConfig } from "@baijanstack/express-auth";
+import { initAuth, RouteGenerator, TConfig } from "@baijanstack/express-auth";
 import {
   EmailNotificationService,
-  ForgotPasswordPersistor,
-  LoginPersistor,
-  LogoutPersistor,
-  MeRoutePersistor,
-  RefreshPersistor,
-  ResetPasswordPersistor,
-  SignUpPersistor,
-  VerifyEmailPersistor,
-  VerifyOtpPersistor,
+  ForgotPasswordHandler,
+  LoginHandler,
+  LogoutHandler,
+  MeRouteHandler,
+  RefreshHandler,
+  ResetPasswordHandler,
+  SignUpHandler,
+  VerifyEmailHandler,
+  VerifyOtpHandler,
 } from "./auth";
 
 const PORT = 4000;
@@ -51,41 +51,22 @@ async function main() {
     authConfig
   );
 
-  // sign up route
-  const signUpPersistor = new SignUpPersistor();
-  routeGenerator.createSignUpRoute(signUpPersistor);
+  initAuth({
+    routeGenerator,
+    signUpHandler: new SignUpHandler(),
+    loginHandler: new LoginHandler(),
+    logoutHandler: new LogoutHandler(),
+    refreshHandler: new RefreshHandler(),
+    resetPasswordHandler: new ResetPasswordHandler(),
+    meRouteHandler: new MeRouteHandler(),
+    verifyEmailHandler: new VerifyEmailHandler(),
+    forgotPasswordHandler: new ForgotPasswordHandler(),
+    verifyOtpHandler: new VerifyOtpHandler(),
+  });
 
-  // login route
-  const loginPersistor = new LoginPersistor();
-  routeGenerator.createLoginRoute(loginPersistor);
-
-  // logout route
-  const logoutPersistor = new LogoutPersistor();
-  routeGenerator.createLogoutRoute(logoutPersistor);
-
-  // refresh route
-  const refreshPersistor = new RefreshPersistor();
-  routeGenerator.createRefreshRoute(refreshPersistor);
-
-  // reset password route
-  const resetPasswordPersistor = new ResetPasswordPersistor();
-  routeGenerator.createResetPasswordRoute(resetPasswordPersistor);
-
-  // me route
-  const meRoutePersistor = new MeRoutePersistor();
-  routeGenerator.createMeRoute(meRoutePersistor);
-
-  // verify email route
-  const verifyEmailPersistor = new VerifyEmailPersistor();
-  routeGenerator.createVerifyEmailRoute(verifyEmailPersistor);
-
-  // forgot password route
-  const forgotPasswordPersistor = new ForgotPasswordPersistor();
-  routeGenerator.createForgotPasswordRoute(forgotPasswordPersistor);
-
-  // verify otp route
-  const verifyOtpPersistor = new VerifyOtpPersistor();
-  routeGenerator.createVerifyOtpRoute(verifyOtpPersistor);
+  app.get("/authed-ping", routeGenerator.validateAccessToken, (req, res) => {
+    res.send("hello from server");
+  });
 
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error("final error");

@@ -1,14 +1,14 @@
 import {
-  ILoginPersistor,
-  ILogoutPersistor,
-  IRefreshPersistor,
-  IResetPasswordPersistor,
-  ISignUpPersistor,
-  IMeRoutePersistor,
-  IVerifyEmailPersistor,
+  ILoginHandler,
+  ILogoutHandler,
+  IRefreshHandler,
+  IResetPasswordHandler,
+  ISignUpHandler,
+  IMeRouteHandler,
+  IVerifyEmailHandler,
   INotifyService,
-  IForgotPasswordPersistor,
-  IVerifyOtpPersistor,
+  IForgotPasswordHandler,
+  IVerifyOtpHandler,
 } from "@baijanstack/express-auth";
 
 import { prisma } from "./prisma-client";
@@ -22,9 +22,9 @@ interface TSignUpBodyInput extends TEmailObj {
   password: string;
 }
 
-export class SignUpPersistor implements ISignUpPersistor<TSignUpBodyInput> {
+export class SignUpHandler implements ISignUpHandler {
   constructor() {
-    console.log("signup persistor init...");
+    console.log("signup Handler init...");
   }
 
   errors: { USER_ALREADY_EXISTS_MESSAGE?: string } = {};
@@ -58,7 +58,7 @@ type TLoginOutput = {
   password: string;
 };
 
-export class LoginPersistor implements ILoginPersistor<TLoginOutput> {
+export class LoginHandler implements ILoginHandler {
   getUserByEmail: (email: string) => Promise<any> = async (email) => {
     const user = await prisma.user.findUnique({
       where: {
@@ -91,7 +91,7 @@ export class LoginPersistor implements ILoginPersistor<TLoginOutput> {
   };
 }
 
-export class LogoutPersistor implements ILogoutPersistor {
+export class LogoutHandler implements ILogoutHandler {
   shouldLogout: () => Promise<boolean> = async () => {
     return true;
   };
@@ -102,7 +102,7 @@ type TRefreshOutput = {
   name: string;
 };
 
-export class RefreshPersistor implements IRefreshPersistor<TRefreshOutput> {
+export class RefreshHandler implements IRefreshHandler {
   errors: { INVALID_REFRESH_TOKEN?: string } = {};
 
   refresh: (token: string) => Promise<void> = async () => {
@@ -129,7 +129,7 @@ export class RefreshPersistor implements IRefreshPersistor<TRefreshOutput> {
   };
 }
 
-export class ResetPasswordPersistor implements IResetPasswordPersistor {
+export class ResetPasswordHandler implements IResetPasswordHandler {
   saveHashedPassword: (email: string, hashedPassword: string) => Promise<void> =
     async (email, hashedPassword) => {
       await prisma.user.update({
@@ -160,13 +160,13 @@ type TMeOutput = {
   email: string;
 };
 
-export class MeRoutePersistor implements IMeRoutePersistor<TMeOutput> {
+export class MeRouteHandler implements IMeRouteHandler {
   getMeByEmail: () => Promise<any> = async () => {
     console.log("getting logged in user...");
   };
 }
 
-export class VerifyEmailPersistor implements IVerifyEmailPersistor {
+export class VerifyEmailHandler implements IVerifyEmailHandler {
   errors: { EMAIL_NOT_ELIGIBLE_FOR_VERIFICATION?: string } = {
     EMAIL_NOT_ELIGIBLE_FOR_VERIFICATION: "",
   };
@@ -192,15 +192,13 @@ export class VerifyEmailPersistor implements IVerifyEmailPersistor {
   };
 }
 
-export class ForgotPasswordPersistor implements IForgotPasswordPersistor {
+export class ForgotPasswordHandler implements IForgotPasswordHandler {
   doesUserExists: (email: string) => Promise<boolean> = async (email) => {
     const user = await prisma.user.findUnique({
       where: {
         email,
       },
     });
-
-    console.log("user", user);
 
     return !!user;
   };
@@ -231,7 +229,7 @@ export class ForgotPasswordPersistor implements IForgotPasswordPersistor {
   };
 }
 
-export class VerifyOtpPersistor implements IVerifyOtpPersistor {
+export class VerifyOtpHandler implements IVerifyOtpHandler {
   saveNewPassword: (email: string, password: string) => Promise<void> = async (
     email,
     password
